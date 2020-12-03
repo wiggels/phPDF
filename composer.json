@@ -4,7 +4,9 @@
     "keywords": ["PDF", "phPDF", "PHP"],
     "homepage": "https://github.com/wiggels/phPDF",
     "license": "MIT",
-    "require": {},
+    "require": {
+        "php": "^8.0"
+    },
     "require-dev": {},
     "autoload": {
         "psr-4": {
