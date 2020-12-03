@@ -68,7 +68,7 @@ class PDF {
     *                               Public methods                                 *
     *******************************************************************************/
 
-    function __construct(string $orientation='P', string $unit='mm', mixed $size='A4') {
+    function __construct(string $orientation='P', string $unit='mm', string|array $size='A4') {
         // Some checks
         $this->_dochecks();
         // Initialization of properties
@@ -195,7 +195,7 @@ class PDF {
         $this->PageBreakTrigger = $this->h-$margin;
     }
 
-    function SetDisplayMode(mixed $zoom, string $layout='default'): void {
+    function SetDisplayMode(string|float $zoom, string $layout='default'): void {
         // Set display mode in viewer
         if($zoom=='fullpage' || $zoom=='fullwidth' || $zoom=='real' || $zoom=='default' || !is_string($zoom))
             $this->ZoomMode = $zoom;
@@ -266,7 +266,7 @@ class PDF {
         $this->_enddoc();
     }
 
-    function AddPage(string $orientation='', mixed $size='', int $rotation=0): void {
+    function AddPage(string $orientation='', string|array $size='', int $rotation=0): void {
         // Start a new page
         if($this->state==3)
             $this->Error('The document is closed');
@@ -502,7 +502,7 @@ class PDF {
         $this->links[$link] = array($page, $y);
     }
 
-    function Link(float $x, float $y, float $w, float $h, mixed $link): void {
+    function Link(float $x, float $y, float $w, float $h, string|int $link): void {
         // Put a link on the page
         $this->PageLinks[$this->page][] = array($x*$this->k, $this->hPt-$y*$this->k, $w*$this->k, $h*$this->k, $link);
     }
@@ -524,7 +524,7 @@ class PDF {
         return $this->AutoPageBreak;
     }
 
-    function Cell(float $w, float $h=0, string $txt='', mixed $border=0, int $ln=0, string $align='', bool $fill=false, mixed $link=''): void {
+    function Cell(float $w, float $h=0, string $txt='', int|string $border=0, int $ln=0, string $align='', bool $fill=false, string|int $link=''): void {
         // Output a cell
         $k = $this->k;
         if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak()) {
@@ -596,7 +596,7 @@ class PDF {
             $this->x += $w;
     }
 
-    function MultiCell(float $w, float $h, string $txt, mixed $border=0, string $align='J', bool $fill=false): void {
+    function MultiCell(float $w, float $h, string $txt, int|string $border=0, string $align='J', bool $fill=false): void {
         // Output text with automatic or explicit line breaks
         if(!isset($this->CurrentFont))
             $this->Error('No font has been set');
@@ -700,7 +700,7 @@ class PDF {
         $this->x = $this->lMargin;
     }
 
-    function Write(float $h, string $txt, mixed $link=''): void {
+    function Write(float $h, string $txt, string|int $link=''): void {
         // Output text in flowing mode
         if(!isset($this->CurrentFont))
             $this->Error('No font has been set');
@@ -785,7 +785,7 @@ class PDF {
             $this->y += $h;
     }
 
-    function Image(string $file, ?float $x=null, ?float $y=null, float $w=0, float $h=0, string $type='', mixed $link=''): void {
+    function Image(string $file, ?float $x=null, ?float $y=null, float $w=0, float $h=0, string $type='', string|int $link=''): void {
         // Put an image on the page
         if($file=='')
             $this->Error('Image file name is empty');
