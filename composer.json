@@ -1,0 +1,20 @@
+{
+    "name": "wiggels/phpdf",
+    "description": "Generate PDF files with pure PHP",
+    "keywords": ["PDF", "phPDF", "PHP"],
+    "homepage": "https://github.com/wiggels/phPDF",
+    "license": "MIT",
+    "require": {},
+    "require-dev": {},
+    "autoload": {
+        "psr-4": {
+            "PHPDF\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "R Hunter Wigelsworth",
+            "email": "wiggels@gmail.com"
+        }
+    ]
+}
