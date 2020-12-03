@@ -6,10 +6,10 @@ define('PHPDF_VERSION','0.1');
 
 class PDF {
 
-    protected $page;               // current page number
+    protected int $page;           // current page number
     protected $n;                  // current object number
     protected $offsets;            // array of object offsets
-    protected $buffer;             // buffer holding in-memory PDF
+    protected string $buffer;      // buffer holding in-memory PDF
     protected $pages;              // array containing pages
     protected $state;              // current document state
     protected $compress;           // compression flag
@@ -22,13 +22,15 @@ class PDF {
     protected $CurRotation;        // current page rotation
     protected $PageInfo;           // page-related data
     protected $wPt, $hPt;          // dimensions of current page in points
-    protected $w, $h;              // dimensions of current page in user unit
+    protected float $w;            // width of current page in user unit
+    protected float $h;            // height of current page in user unit
     protected $lMargin;            // left margin
     protected $tMargin;            // top margin
     protected $rMargin;            // right margin
     protected $bMargin;            // page break margin
     protected $cMargin;            // cell margin
-    protected $x, $y;              // current position in user unit
+    protected float $x;            // current x position in user unit
+    protected float $y;            // current y position in user unit
     protected $lasth;              // height of last printed cell
     protected $LineWidth;          // line width in user unit
     protected $fontpath;           // path containing fonts
@@ -54,9 +56,9 @@ class PDF {
     protected $links;              // array of internal links
     protected $AutoPageBreak;      // automatic page breaking
     protected $PageBreakTrigger;   // threshold used to trigger page breaks
-    protected $InHeader;           // flag set when processing header
-    protected $InFooter;           // flag set when processing footer
-    protected $AliasNbPages;       // alias for total number of pages
+    protected bool $InHeader;      // flag set when processing header
+    protected bool $InFooter;      // flag set when processing footer
+    protected string $AliasNbPages;// alias for total number of pages
     protected $ZoomMode;           // zoom display mode
     protected $LayoutMode;         // layout display mode
     protected $metadata;           // document properties
@@ -66,7 +68,7 @@ class PDF {
     *                               Public methods                                 *
     *******************************************************************************/
 
-    function __construct($orientation='P', $unit='mm', $size='A4') {
+    function __construct(string $orientation='P', string $unit='mm', mixed $size='A4') {
         // Some checks
         $this->_dochecks();
         // Initialization of properties
@@ -96,8 +98,8 @@ class PDF {
         $this->WithAlpha = false;
         $this->ws = 0;
         // Font path
-        if(defined('FPDF_FONTPATH')) {
-            $this->fontpath = FPDF_FONTPATH;
+        if(defined('PHPDF_FONTPATH')) {
+            $this->fontpath = PHPDF_FONTPATH;
             if(substr($this->fontpath,-1)!='/' && substr($this->fontpath,-1)!='\\')
                 $this->fontpath .= '/';
         }
@@ -160,7 +162,7 @@ class PDF {
         $this->PDFVersion = '1.3';
     }
 
-    function SetMargins($left, $top, $right=null) {
+    function SetMargins(float $left, float $top, ?float $right=null): void {
         // Set left, top and right margins
         $this->lMargin = $left;
         $this->tMargin = $top;
@@ -169,31 +171,31 @@ class PDF {
         $this->rMargin = $right;
     }
 
-    function SetLeftMargin($margin) {
+    function SetLeftMargin(float $margin): void {
         // Set left margin
         $this->lMargin = $margin;
         if($this->page>0 && $this->x<$margin)
             $this->x = $margin;
     }
 
-    function SetTopMargin($margin) {
+    function SetTopMargin(float $margin): void {
         // Set top margin
         $this->tMargin = $margin;
     }
 
-    function SetRightMargin($margin) {
+    function SetRightMargin(float $margin): void {
         // Set right margin
         $this->rMargin = $margin;
     }
 
-    function SetAutoPageBreak($auto, $margin=0) {
+    function SetAutoPageBreak(bool $auto, float $margin=0): void {
         // Set auto page break mode and triggering margin
         $this->AutoPageBreak = $auto;
         $this->bMargin = $margin;
         $this->PageBreakTrigger = $this->h-$margin;
     }
 
-    function SetDisplayMode($zoom, $layout='default') {
+    function SetDisplayMode(mixed $zoom, string $layout='default'): void {
         // Set display mode in viewer
         if($zoom=='fullpage' || $zoom=='fullwidth' || $zoom=='real' || $zoom=='default' || !is_string($zoom))
             $this->ZoomMode = $zoom;
@@ -205,7 +207,7 @@ class PDF {
             $this->Error('Incorrect layout display mode: '.$layout);
     }
 
-    function SetCompression($compress) {
+    function SetCompression(bool $compress): void {
         // Set page compression
         if(function_exists('gzcompress'))
             $this->compress = $compress;
@@ -213,42 +215,42 @@ class PDF {
             $this->compress = false;
     }
 
-    function SetTitle($title, $isUTF8=false) {
+    function SetTitle(string $title, bool $isUTF8=false): void {
         // Title of document
         $this->metadata['Title'] = $isUTF8 ? $title : utf8_encode($title);
     }
 
-    function SetAuthor($author, $isUTF8=false) {
+    function SetAuthor(string $author, bool $isUTF8=false): void {
         // Author of document
         $this->metadata['Author'] = $isUTF8 ? $author : utf8_encode($author);
     }
 
-    function SetSubject($subject, $isUTF8=false) {
+    function SetSubject(string $subject, bool $isUTF8=false): void {
         // Subject of document
         $this->metadata['Subject'] = $isUTF8 ? $subject : utf8_encode($subject);
     }
 
-    function SetKeywords($keywords, $isUTF8=false) {
+    function SetKeywords(string $keywords, bool $isUTF8=false): void {
         // Keywords of document
         $this->metadata['Keywords'] = $isUTF8 ? $keywords : utf8_encode($keywords);
     }
 
-    function SetCreator($creator, $isUTF8=false) {
+    function SetCreator(string $creator, bool $isUTF8=false): void {
         // Creator of document
         $this->metadata['Creator'] = $isUTF8 ? $creator : utf8_encode($creator);
     }
 
-    function AliasNbPages($alias='{nb}') {
+    function AliasNbPages(string $alias='{nb}'): void {
         // Define an alias for total number of pages
         $this->AliasNbPages = $alias;
     }
 
-    function Error($msg) {
+    function Error(string $msg): void {
         // Fatal error
-        throw new Exception('FPDF error: '.$msg);
+        throw new Exception('PHPDF error: '.$msg);
     }
 
-    function Close() {
+    function Close(): void {
         // Terminate document
         if($this->state==3)
             return;
@@ -264,7 +266,7 @@ class PDF {
         $this->_enddoc();
     }
 
-    function AddPage($orientation='', $size='', $rotation=0) {
+    function AddPage(string $orientation='', mixed $size='', int $rotation=0): void {
         // Start a new page
         if($this->state==3)
             $this->Error('The document is closed');
@@ -336,12 +338,12 @@ class PDF {
         // To be implemented in your own inherited class
     }
 
-    function PageNo() {
+    function PageNo(): int {
         // Get current page number
         return $this->page;
     }
 
-    function SetDrawColor($r, $g=null, $b=null) {
+    function SetDrawColor(int $r, ?int $g=null, ?int $b=null): void {
         // Set color for all stroking operations
         if(($r==0 && $g==0 && $b==0) || $g===null)
             $this->DrawColor = sprintf('%.3F G',$r/255);
@@ -351,7 +353,7 @@ class PDF {
             $this->_out($this->DrawColor);
     }
 
-    function SetFillColor($r, $g=null, $b=null) {
+    function SetFillColor(int $r, ?int $g=null, ?int $b=null): void {
         // Set color for all filling operations
         if(($r==0 && $g==0 && $b==0) || $g===null)
             $this->FillColor = sprintf('%.3F g',$r/255);
@@ -362,7 +364,7 @@ class PDF {
             $this->_out($this->FillColor);
     }
 
-    function SetTextColor($r, $g=null, $b=null) {
+    function SetTextColor(int $r, ?int $g=null, ?int $b=null): void {
         // Set color for text
         if(($r==0 && $g==0 && $b==0) || $g===null)
             $this->TextColor = sprintf('%.3F g',$r/255);
@@ -371,7 +373,7 @@ class PDF {
         $this->ColorFlag = ($this->FillColor!=$this->TextColor);
     }
 
-    function GetStringWidth($s) {
+    function GetStringWidth(string $s): float {
         // Get width of a string in the current font
         $s = (string)$s;
         $cw = &$this->CurrentFont['cw'];
@@ -382,19 +384,19 @@ class PDF {
         return $w*$this->FontSize/1000;
     }
 
-    function SetLineWidth($width) {
+    function SetLineWidth(float $width): void {
         // Set line width
         $this->LineWidth = $width;
         if($this->page>0)
             $this->_out(sprintf('%.2F w',$width*$this->k));
     }
 
-    function Line($x1, $y1, $x2, $y2) {
+    function Line(float $x1, float $y1, float $x2, float $y2): void {
         // Draw a line
         $this->_out(sprintf('%.2F %.2F m %.2F %.2F l S',$x1*$this->k,($this->h-$y1)*$this->k,$x2*$this->k,($this->h-$y2)*$this->k));
     }
 
-    function Rect($x, $y, $w, $h, $style='') {
+    function Rect(float $x, float $y, float $w, float $h, string $style=''): void {
         // Draw a rectangle
         if($style=='F')
             $op = 'f';
@@ -405,7 +407,7 @@ class PDF {
         $this->_out(sprintf('%.2F %.2F %.2F %.2F re %s',$x*$this->k,($this->h-$y)*$this->k,$w*$this->k,-$h*$this->k,$op));
     }
 
-    function AddFont($family, $style='', $file='') {
+    function AddFont(string $family, string $style='', string $file=''): void {
         // Add a TrueType, OpenType or Type1 font
         $family = strtolower($family);
         if($file=='')
@@ -428,7 +430,7 @@ class PDF {
         $this->fonts[$fontkey] = $info;
     }
 
-    function SetFont($family, $style='', $size=0) {
+    function SetFont(string $family, string $style='', float $size=0): void {
         // Select a font; size given in points
         if($family=='')
             $family = $this->FontFamily;
@@ -474,7 +476,7 @@ class PDF {
             $this->_out(sprintf('BT /F%d %.2F Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
     }
 
-    function SetFontSize($size) {
+    function SetFontSize(float $size): void {
         // Set font size in points
         if($this->FontSizePt==$size)
             return;
@@ -484,14 +486,14 @@ class PDF {
             $this->_out(sprintf('BT /F%d %.2F Tf ET',$this->CurrentFont['i'],$this->FontSizePt));
     }
 
-    function AddLink() {
+    function AddLink(): int {
         // Create a new internal link
         $n = count($this->links)+1;
         $this->links[$n] = array(0, 0);
         return $n;
     }
 
-    function SetLink($link, $y=0, $page=-1) {
+    function SetLink(int $link, float $y=0, int $page=-1): void {
         // Set destination of internal link
         if($y==-1)
             $y = $this->y;
@@ -500,12 +502,12 @@ class PDF {
         $this->links[$link] = array($page, $y);
     }
 
-    function Link($x, $y, $w, $h, $link) {
+    function Link(float $x, float $y, float $w, float $h, mixed $link): void {
         // Put a link on the page
         $this->PageLinks[$this->page][] = array($x*$this->k, $this->hPt-$y*$this->k, $w*$this->k, $h*$this->k, $link);
     }
 
-    function Text($x, $y, $txt) {
+    function Text(float $x, float $y, string $txt): void {
         // Output a string
         if(!isset($this->CurrentFont))
             $this->Error('No font has been set');
@@ -517,12 +519,12 @@ class PDF {
         $this->_out($s);
     }
 
-    function AcceptPageBreak() {
+    function AcceptPageBreak(): bool {
         // Accept automatic page break or not
         return $this->AutoPageBreak;
     }
 
-    function Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=false, $link='') {
+    function Cell(float $w, float $h=0, string $txt='', mixed $border=0, int $ln=0, string $align='', bool $fill=false, mixed $link=''): void {
         // Output a cell
         $k = $this->k;
         if($this->y+$h>$this->PageBreakTrigger && !$this->InHeader && !$this->InFooter && $this->AcceptPageBreak()) {
@@ -594,7 +596,7 @@ class PDF {
             $this->x += $w;
     }
 
-    function MultiCell($w, $h, $txt, $border=0, $align='J', $fill=false) {
+    function MultiCell(float $w, float $h, string $txt, mixed $border=0, string $align='J', bool $fill=false): void {
         // Output text with automatic or explicit line breaks
         if(!isset($this->CurrentFont))
             $this->Error('No font has been set');
@@ -698,7 +700,7 @@ class PDF {
         $this->x = $this->lMargin;
     }
 
-    function Write($h, $txt, $link='') {
+    function Write(float $h, string $txt, mixed $link=''): void {
         // Output text in flowing mode
         if(!isset($this->CurrentFont))
             $this->Error('No font has been set');
@@ -774,7 +776,7 @@ class PDF {
             $this->Cell($l/1000*$this->FontSize,$h,substr($s,$j),0,0,'',false,$link);
     }
 
-    function Ln($h=null) {
+    function Ln(?float $h=null): void {
         // Line feed; default value is the last cell height
         $this->x = $this->lMargin;
         if($h===null)
@@ -783,7 +785,7 @@ class PDF {
             $this->y += $h;
     }
 
-    function Image($file, $x=null, $y=null, $w=0, $h=0, $type='', $link='') {
+    function Image(string $file, ?float $x=null, ?float $y=null, float $w=0, float $h=0, string $type='', mixed $link=''): void {
         // Put an image on the page
         if($file=='')
             $this->Error('Image file name is empty');
@@ -842,22 +844,22 @@ class PDF {
             $this->Link($x,$y,$w,$h,$link);
     }
 
-    function GetPageWidth() {
+    function GetPageWidth(): float {
         // Get current page width
         return $this->w;
     }
 
-    function GetPageHeight() {
+    function GetPageHeight(): float {
         // Get current page height
         return $this->h;
     }
 
-    function GetX() {
+    function GetX(): float {
         // Get x position
         return $this->x;
     }
 
-    function SetX($x) {
+    function SetX(float $x): void {
         // Set x position
         if($x>=0)
             $this->x = $x;
@@ -865,12 +867,12 @@ class PDF {
             $this->x = $this->w+$x;
     }
 
-    function GetY() {
+    function GetY(): float {
         // Get y position
         return $this->y;
     }
 
-    function SetY($y, $resetX=true) {
+    function SetY(float $y, bool $resetX=true): void {
         // Set y position and optionally reset x
         if($y>=0)
             $this->y = $y;
@@ -880,13 +882,13 @@ class PDF {
             $this->x = $this->lMargin;
     }
 
-    function SetXY($x, $y) {
+    function SetXY(float $x, float $y) {
         // Set x and y positions
         $this->SetX($x);
         $this->SetY($y,false);
     }
 
-    function Output($dest='', $name='', $isUTF8=false) {
+    function Output(string $dest='', string $name='', bool $isUTF8=false): string {
         // Output PDF to some destination
         $this->Close();
         if(strlen($name)==1 && strlen($dest)!=1) {
