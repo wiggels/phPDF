@@ -6,63 +6,64 @@ define('PHPDF_VERSION','0.1');
 
 class PDF {
 
-    protected int $page;           // current page number
-    protected $n;                  // current object number
-    protected $offsets;            // array of object offsets
-    protected string $buffer;      // buffer holding in-memory PDF
-    protected $pages;              // array containing pages
-    protected $state;              // current document state
-    protected $compress;           // compression flag
-    protected $k;                  // scale factor (number of points in user unit)
-    protected $DefOrientation;     // default orientation
-    protected $CurOrientation;     // current orientation
-    protected $StdPageSizes;       // standard page sizes
-    protected $DefPageSize;        // default page size
-    protected $CurPageSize;        // current page size
-    protected $CurRotation;        // current page rotation
-    protected $PageInfo;           // page-related data
-    protected $wPt, $hPt;          // dimensions of current page in points
-    protected float $w;            // width of current page in user unit
-    protected float $h;            // height of current page in user unit
-    protected $lMargin;            // left margin
-    protected $tMargin;            // top margin
-    protected $rMargin;            // right margin
-    protected $bMargin;            // page break margin
-    protected $cMargin;            // cell margin
-    protected float $x;            // current x position in user unit
-    protected float $y;            // current y position in user unit
-    protected $lasth;              // height of last printed cell
-    protected $LineWidth;          // line width in user unit
-    protected $fontpath;           // path containing fonts
-    protected $CoreFonts;          // array of core font names
-    protected $fonts;              // array of used fonts
-    protected $FontFiles;          // array of font files
-    protected $encodings;          // array of encodings
-    protected $cmaps;              // array of ToUnicode CMaps
-    protected $FontFamily;         // current font family
-    protected $FontStyle;          // current font style
-    protected $underline;          // underlining flag
-    protected $CurrentFont;        // current font info
-    protected $FontSizePt;         // current font size in points
-    protected $FontSize;           // current font size in user unit
-    protected $DrawColor;          // commands for drawing color
-    protected $FillColor;          // commands for filling color
-    protected $TextColor;          // commands for text color
-    protected $ColorFlag;          // indicates whether fill and text colors are different
-    protected $WithAlpha;          // indicates whether alpha channel is used
-    protected $ws;                 // word spacing
-    protected $images;             // array of used images
-    protected $PageLinks;          // array of links in pages
-    protected $links;              // array of internal links
-    protected $AutoPageBreak;      // automatic page breaking
-    protected $PageBreakTrigger;   // threshold used to trigger page breaks
-    protected bool $InHeader;      // flag set when processing header
-    protected bool $InFooter;      // flag set when processing footer
-    protected string $AliasNbPages;// alias for total number of pages
-    protected $ZoomMode;           // zoom display mode
-    protected $LayoutMode;         // layout display mode
-    protected $metadata;           // document properties
-    protected $PDFVersion;         // PDF version number
+    protected int $page;                 // current page number
+    protected int $n;                    // current object number
+    protected array $offsets;            // array of object offsets
+    protected string $buffer;            // buffer holding in-memory PDF
+    protected array $pages;              // array containing pages
+    protected int $state;                // current document state
+    protected bool $compress;            // compression flag
+    protected float $k;                  // scale factor (number of points in user unit)
+    protected string $DefOrientation;    // default orientation
+    protected string $CurOrientation;    // current orientation
+    protected array $StdPageSizes;       // standard page sizes
+    protected array $DefPageSize;        // default page size
+    protected array $CurPageSize;        // current page size
+    protected int $CurRotation;          // current page rotation
+    protected array $PageInfo;           // page-related data
+    protected float $wPt;                // width of current page in points
+    protected float $hPt;                // height of current page in points
+    protected float $w;                  // width of current page in user unit
+    protected float $h;                  // height of current page in user unit
+    protected float $lMargin;            // left margin
+    protected float $tMargin;            // top margin
+    protected float $rMargin;            // right margin
+    protected float $bMargin;            // page break margin
+    protected float $cMargin;            // cell margin
+    protected float $x;                  // current x position in user unit
+    protected float $y;                  // current y position in user unit
+    protected float $lasth;              // height of last printed cell
+    protected float $LineWidth;          // line width in user unit
+    protected string $fontpath;          // path containing fonts
+    protected array $CoreFonts;          // array of core font names
+    protected array $fonts;              // array of used fonts
+    protected array $FontFiles;          // array of font files
+    protected array $encodings;          // array of encodings
+    protected array $cmaps;              // array of ToUnicode CMaps
+    protected string $FontFamily;        // current font family
+    protected string $FontStyle;         // current font style
+    protected bool $underline;          // underlining flag
+    protected array $CurrentFont;        // current font info
+    protected float $FontSizePt;         // current font size in points
+    protected float $FontSize;           // current font size in user unit
+    protected string $DrawColor;         // commands for drawing color
+    protected string $FillColor;         // commands for filling color
+    protected string $TextColor;         // commands for text color
+    protected bool $ColorFlag;           // indicates whether fill and text colors are different
+    protected bool $WithAlpha;           // indicates whether alpha channel is used
+    protected float $ws;                 // word spacing
+    protected array $images;             // array of used images
+    protected array $PageLinks;          // array of links in pages
+    protected array $links;              // array of internal links
+    protected bool $AutoPageBreak;       // automatic page breaking
+    protected float $PageBreakTrigger;   // threshold used to trigger page breaks
+    protected bool $InHeader;            // flag set when processing header
+    protected bool $InFooter;            // flag set when processing footer
+    protected string $AliasNbPages;      // alias for total number of pages
+    protected string|float $ZoomMode;    // zoom display mode
+    protected string $LayoutMode;        // layout display mode
+    protected array $metadata;           // document properties
+    protected string $PDFVersion;        // PDF version number
 
     /*******************************************************************************
     *                               Public methods                                 *
