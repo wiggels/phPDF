@@ -42,7 +42,7 @@ class PDF {
     protected array $cmaps;              // array of ToUnicode CMaps
     protected string $FontFamily;        // current font family
     protected string $FontStyle;         // current font style
-    protected bool $underline;          // underlining flag
+    protected bool $underline;           // underlining flag
     protected array $CurrentFont;        // current font info
     protected float $FontSizePt;         // current font size in points
     protected float $FontSize;           // current font size in user unit
@@ -248,7 +248,7 @@ class PDF {
 
     function Error(string $msg): void {
         // Fatal error
-        throw new Exception('PHPDF error: '.$msg);
+        throw new \Exception('PHPDF error: '.$msg);
     }
 
     function Close(): void {
